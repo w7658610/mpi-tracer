@@ -270,6 +270,8 @@ MPI_Iallgather
 
 MPI_Scatter
 
+MPI_Iscatter
+
 ## Notes
 
 * Linux Only
