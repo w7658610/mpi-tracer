@@ -61,7 +61,8 @@ static char TRACE_TYPE_NAME[MAX_TRACE_FN][25]={
     "MPI_Allgather",
     "MPI_Iallgather",
     "MPI_Scatter",
-    "MPI_Iscatter"
+    "MPI_Iscatter",
+    "MPI_Exscan"
 };
 
 #define OPENMPI 1
@@ -1891,4 +1892,32 @@ int MPI_Iscatter(const void *sendbuf, int sendcount,
     trace_index++;
     MT_UNLOCK()
     return ret;   
+    }
+
+int MPI_Exscan(const void *sendbuf, void *recvbuf, int count,
+    MPI_Datatype datatype, MPI_Op op, MPI_Comm comm){//未测试
+    int ret;
+    int type=type_exscan;
+    int idx=-1;
+    double start,end;
+    trace_log_t* log;
+    MPI_EXSCAN fn=TRACE_TYPE_FN[type];
+    int size=0;
+    MPI_Type_size(datatype,&size);
+    if((TRACE_IGNORE_LIST[type])||(log_threshold>0&&log_threshold>count*size)) return fn(sendbuf,recvbuf,count,datatype,op,comm);
+    start=timer_fn();
+    ret=fn(sendbuf,recvbuf,count,datatype,op,comm);
+    end=timer_fn();
+    MT_LOCK()
+    idx=trace_index%max_trace_num;
+    log=&probe_log[idx];
+    new_log(log,type,trace_index,start,end,end);
+    log->comm=comm;
+    log->rcount=count;
+    log->scount=count;
+    log->rdatatype_size=size;
+    log->sdatatype_size=size;
+    trace_index++;
+    MT_UNLOCK()
+    return ret;
     }

@@ -19,13 +19,14 @@ int MPI_Scatter(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
 int MPI_Iscatter(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
                  void *recvbuf, int recvcount, MPI_Datatype recvtype,
                  int root, MPI_Comm comm, MPI_Request *request)
+int MPI_Exscan(const void *sendbuf, void *recvbuf, int count,
+               MPI_Datatype datatype, MPI_Op op, MPI_Comm comm)
 
 ```
 
 ## 未完成
 ```c
-int MPI_Exscan(const void *sendbuf, void *recvbuf, int count,
-               MPI_Datatype datatype, MPI_Op op, MPI_Comm comm)
+
 
 ```
 

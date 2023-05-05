@@ -96,6 +96,8 @@ typedef int(*MPI_SCATTER)(const void *sendbuf, int sendcount,
 typedef int(*MPI_ISCATTER)(const void *sendbuf, int sendcount, 
     MPI_Datatype sendtype, void *recvbuf, int recvcount, 
     MPI_Datatype recvtype, int root, MPI_Comm comm, MPI_Request *request);
+typedef int(*MPI_EXSCAN)(const void *sendbuf, void *recvbuf, int count,
+    MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
 /* must keep same order with TRACE_TYPE_NAME */
 enum TRACE_TYPE{
     type_send,
@@ -131,6 +133,7 @@ enum TRACE_TYPE{
     type_iallgather,
     type_scatter,
     type_iscatter,
+    type_exscan,
     type_COUNT
 }; 
 #define MAX_TRACE_NUM 100000

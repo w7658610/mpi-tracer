@@ -272,6 +272,8 @@ MPI_Scatter
 
 MPI_Iscatter
 
+MPI_Exscan
+
 ## Notes
 
 * Linux Only
