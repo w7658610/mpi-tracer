@@ -2,6 +2,11 @@
 #define __MPI_TRACER_H
 #define MT
 
+/* -
+ * 首先检查是否定义了MT（多线程支持）。
+ * 如果定义了MT，那么将定义互斥锁操作宏MT_LOCK和MT_UNLOCK。
+ * 如果没有定义MT，则这些宏为空操作。
+ */
 #ifdef MT
 #define MT_LOCK() {if(mt_flag) { pthread_mutex_lock(&log_mutex);}}
 #define MT_UNLOCK() {if(mt_flag) { pthread_mutex_unlock(&log_mutex);}}
@@ -16,88 +21,43 @@
 #define DEFAULT_BUF_SIZE 1024
 #define DEFAULT_GROUP_SIZE 4096
 
-typedef int(*MPI_INIT)(int *argc, char ***argv);
-typedef int(*MPI_INIT_THREAD)(int *argc, char ***argv,
-    int required, int *provided);
-typedef int(*MPI_FINALIZE)();
-
-typedef int(*MPI_SEND)(const void *buf, int count, MPI_Datatype datatype, int dest,
-    int tag, MPI_Comm comm);
-typedef int(*MPI_ISEND)(const void *buf, int count, MPI_Datatype datatype, int dest,
-    int tag, MPI_Comm comm, MPI_Request *request);
-typedef int(*MPI_SSEND)(const void *buf, int count, MPI_Datatype datatype, int dest,
-    int tag, MPI_Comm comm);
-typedef int(*MPI_ISSEND)(const void *buf, int count, MPI_Datatype datatype, int dest,
-    int tag, MPI_Comm comm, MPI_Request *request);
-typedef int (*MPI_BSEND)(const void *buf, int count, MPI_Datatype datatype,
-    int dest, int tag, MPI_Comm comm);
-typedef int(*MPI_IBSEND)(const void *buf, int count, MPI_Datatype datatype, int dest,
-    int tag, MPI_Comm comm, MPI_Request *request);
-typedef int (*MPI_RSEND)(const void *buf, int count, MPI_Datatype datatype,
-    int dest, int tag, MPI_Comm comm);
-typedef int(*MPI_IRSEND)(const void *buf, int count, MPI_Datatype datatype, int dest,
-    int tag, MPI_Comm comm, MPI_Request *request);
-typedef int(*MPI_RECV)(void *buf, int count, MPI_Datatype datatype,
-    int source, int tag, MPI_Comm comm, MPI_Status *status);
-typedef int(*MPI_IRECV)(void *buf, int count, MPI_Datatype datatype,
-        int source, int tag, MPI_Comm comm, MPI_Request *request);
-typedef int(*MPI_WAIT)(MPI_Request *request, MPI_Status *status);
-typedef int(*MPI_WAITALL)(int count, MPI_Request array_of_requests[],
-    MPI_Status *array_of_statuses);
-typedef int(*MPI_TEST)(MPI_Request *request, int *flag, MPI_Status *status);
-typedef int(*MPI_TESTALL)(int count, MPI_Request array_of_requests[],
-    int *flag, MPI_Status array_of_statuses[]);
-typedef int(*MPI_ALLTOALL)(const void *sendbuf, int sendcount,
-    MPI_Datatype sendtype, void *recvbuf, int recvcount,
-    MPI_Datatype recvtype, MPI_Comm comm);
-typedef int(*MPI_BCAST)(void *buffer, int count, MPI_Datatype datatype,
-    int root, MPI_Comm comm);
-typedef int(*MPI_IBCAST)(void *buffer, int count, MPI_Datatype datatype,
-    int root, MPI_Comm comm, MPI_Request *request);
-typedef int(*MPI_REDUCE)(const void *sendbuf, void *recvbuf, int count,
-               MPI_Datatype datatype, MPI_Op op, int root,
-               MPI_Comm comm);
-typedef int(*MPI_IREDUCE)(const void *sendbuf, void *recvbuf, int count,
-                MPI_Datatype datatype, MPI_Op op, int root,
-                MPI_Comm comm, MPI_Request *request);
-typedef int(*MPI_ALLREDUCE)(const void *sendbuf, void *recvbuf, int count,
-                  MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
-typedef int(*MPI_IALLREDUCE)(const void *sendbuf, void *recvbuf, int count,
-                   MPI_Datatype datatype, MPI_Op op, MPI_Comm comm,
-                   MPI_Request *request);
-typedef int(*MPI_IALLTOALL)(const void *sendbuf, int sendcount,
-    MPI_Datatype sendtype, void *recvbuf, int recvcount,
-    MPI_Datatype recvtype, MPI_Comm comm, MPI_Request *request);
-typedef int(*MPI_BARRIER)(MPI_Comm comm);
-typedef int(*MPI_IBARRIER)(MPI_Comm comm, MPI_Request *request);
-
-typedef int (*MPI_COMM_SPLIT)(MPI_Comm comm, int color, int key,
-    MPI_Comm *newcomm);
-
+typedef int (*MPI_INIT)(int *argc, char ***argv);
+typedef int (*MPI_INIT_THREAD)(int *argc, char ***argv, int required, int *provided);
+typedef int (*MPI_FINALIZE)();
+typedef int (*MPI_SEND)(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm);
+typedef int (*MPI_ISEND)(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, MPI_Request *request);
+typedef int (*MPI_SSEND)(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm);
+typedef int (*MPI_ISSEND)(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, MPI_Request *request);
+typedef int (*MPI_BSEND)(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm);
+typedef int (*MPI_IBSEND)(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, MPI_Request *request);
+typedef int (*MPI_RSEND)(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm);
+typedef int (*MPI_IRSEND)(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, MPI_Request *request);
+typedef int (*MPI_RECV)(void *buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Status *status);
+typedef int (*MPI_IRECV)(void *buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Request *request);
+typedef int (*MPI_WAIT)(MPI_Request *request, MPI_Status *status);
+typedef int (*MPI_WAITALL)(int count, MPI_Request array_of_requests[], MPI_Status *array_of_statuses);
+typedef int (*MPI_TEST)(MPI_Request *request, int *flag, MPI_Status *status);
+typedef int (*MPI_TESTALL)(int count, MPI_Request array_of_requests[], int *flag, MPI_Status array_of_statuses[]);
+typedef int (*MPI_ALLTOALL)(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm);
+typedef int (*MPI_BCAST)(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
+typedef int (*MPI_IBCAST)(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm, MPI_Request *request);
+typedef int (*MPI_REDUCE)(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, int root, MPI_Comm comm);
+typedef int (*MPI_IREDUCE)(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, int root, MPI_Comm comm, MPI_Request *request);
+typedef int (*MPI_ALLREDUCE)(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
+typedef int (*MPI_IALLREDUCE)(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm, MPI_Request *request);
+typedef int (*MPI_IALLTOALL)(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm, MPI_Request *request);
+typedef int (*MPI_BARRIER)(MPI_Comm comm);
+typedef int (*MPI_IBARRIER)(MPI_Comm comm, MPI_Request *request);
+typedef int (*MPI_COMM_SPLIT)(MPI_Comm comm, int color, int key, MPI_Comm *newcomm);
 typedef int (*MPI_COMM_DUP)(MPI_Comm comm, MPI_Comm *newcomm);
-
 typedef int (*MPI_COMM_CREATE)(MPI_Comm comm, MPI_Group group, MPI_Comm *newcomm);
-
-typedef int(*MPI_GATHER)(const void *sendbuf, int sendcount,
-    MPI_Datatype sendtype, void *recvbuf, int recvcount, 
-    MPI_Datatype recvtype, int root, MPI_Comm comm);
-typedef int(*MPI_IGATHER)(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
-                void *recvbuf, int recvcount, MPI_Datatype recvtype,
-                int root, MPI_Comm comm, MPI_Request *request);
-typedef int(*MPI_ALLGATHER)(const void *sendbuf, int sendcount, 
-    MPI_Datatype sendtype, void *recvbuf, int recvcount, 
-    MPI_Datatype recvtype, MPI_Comm comm);
-typedef int(*MPI_IALLGATHER)(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
-                   void *recvbuf, int recvcount, MPI_Datatype recvtype,
-                   MPI_Comm comm,  MPI_Request *request);
-typedef int(*MPI_SCATTER)(const void *sendbuf, int sendcount, 
-    MPI_Datatype sendtype, void *recvbuf, int recvcount, 
-    MPI_Datatype recvtype, int root, MPI_Comm comm);
-typedef int(*MPI_ISCATTER)(const void *sendbuf, int sendcount, 
-    MPI_Datatype sendtype, void *recvbuf, int recvcount, 
-    MPI_Datatype recvtype, int root, MPI_Comm comm, MPI_Request *request);
-typedef int(*MPI_EXSCAN)(const void *sendbuf, void *recvbuf, int count,
-    MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
+typedef int (*MPI_GATHER)(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount,  MPI_Datatype recvtype, int root, MPI_Comm comm);
+typedef int (*MPI_IGATHER)(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, int root, MPI_Comm comm, MPI_Request *request);
+typedef int (*MPI_ALLGATHER)(const void *sendbuf, int sendcount,  MPI_Datatype sendtype, void *recvbuf, int recvcount,  MPI_Datatype recvtype, MPI_Comm comm);
+typedef int (*MPI_IALLGATHER)(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm, MPI_Request *request);
+typedef int (*MPI_SCATTER)(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, int root, MPI_Comm comm);
+typedef int (*MPI_ISCATTER)(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, int root, MPI_Comm comm, MPI_Request *request);
+typedef int (*MPI_EXSCAN)(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
 /* must keep same order with TRACE_TYPE_NAME */
 enum TRACE_TYPE{
     type_send,
@@ -138,7 +98,7 @@ enum TRACE_TYPE{
 }; 
 #define MAX_TRACE_NUM 100000
 #define MAX_TRACE_FN 100
-
+/* -存储与跟踪有关的信息。*/
 typedef struct trace_log_struct{
     long id;
     int type;
@@ -155,7 +115,7 @@ typedef struct trace_log_struct{
     void* comm;
     void* private;
 } trace_log_t;
-
+/* -存储成对通信的信息。*/
 typedef struct pair_log_struct{
     int src;
     int dst;
